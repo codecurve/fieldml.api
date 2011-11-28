@@ -39,76 +39,61 @@
  *
  */
 
-#ifndef H_FIELDML_REGION
-#define H_FIELDML_REGION
+#ifndef H_FIELDML_IO_SESSION
+#define H_FIELDML_IO_SESSION
 
 #include <vector>
+#include <set>
 
-#include "ObjectStore.h"
-#include "ImportInfo.h"
-#include "fieldml_structs.h"
+#include "FieldmlIoContext.h"
+#include "ArrayDataReader.h"
+#include "ArrayDataWriter.h"
 
-class FieldmlRegion
+class FieldmlIoSession
 {
 private:
-    const std::string href;
+    FmlIoErrorNumber lastError;
     
-    std::string name;
+    int contextLine;
     
-    std::string root;
+    const char *contextFile;
     
-    std::vector<FmlObjectHandle> localObjects;
+    int debug;
     
-    std::vector<ImportInfo*> imports;
+    std::vector<ArrayDataReader *> readers;
     
-    ObjectStore &store;
+    std::vector<ArrayDataWriter *> writers;
     
-    ImportInfo *getImportInfo( int importSourceIndex );
+    static FieldmlIoSession singleton;
     
 public:
-    FieldmlRegion( const std::string href, const std::string name, const std::string root, ObjectStore &_store );
+    FieldmlIoSession();
 
-    virtual ~FieldmlRegion();
+    virtual ~FieldmlIoSession();
     
-    void addLocalObject( FmlObjectHandle handle );
+    void setErrorContext( const char *file, const int line );
+    
+    FmlIoErrorNumber setError( FmlIoErrorNumber error );
 
-    const bool hasLocalObject( FmlObjectHandle handle, bool allowVirtual, bool allowImport );
+    void setDebug( const int debugValue );
 
-    const FmlObjectHandle getNamedObject( const std::string name );
-    
-    const std::string getObjectName( FmlObjectHandle handle );
-    
-    void setName( const std::string newName );
+    const FmlObjectHandle getLastError();
 
-    void setRoot( const std::string newRoot );
+    ArrayDataReader *handleToReader( FmlReaderHandle handle );
+    
+    FmlReaderHandle addReader( ArrayDataReader *reader );
+    
+    void removeReader( FmlReaderHandle handle );
 
-    const std::string getRoot();
+    ArrayDataWriter *handleToWriter( FmlWriterHandle handle );
     
-    const std::string getHref();
+    FmlWriterHandle addWriter( ArrayDataWriter *writer );
+    
+    void removeWriter( FmlWriterHandle handle );
 
-    const std::string getName();
-    
-    const std::string getLibraryName();
+    FieldmlIoContext *createContext( FmlSessionHandle session );
 
-    void finalize();
-
-    void addImportSource( int importSourceIndex, std::string href, std::string name );
-
-    void addImport( int importSourceIndex, std::string localName, std::string remoteName, FmlObjectHandle object );
-    
-    int getImportSourceCount();
-    
-    int getImportCount( int importSourceIndex );
-    
-    const std::string getImportSourceHref( int importSourceIndex );
-    
-    const std::string getImportSourceRegionName( int importSourceIndex );
-    
-    const std::string getImportLocalName( int importSourceIndex, int importIndex );
-    
-    const std::string getImportRemoteName( int importSourceIndex, int importIndex );
-    
-    FmlObjectHandle getImportObject( int importSourceIndex, int importIndex );
+    static FieldmlIoSession &getSession(); 
 };
 
-#endif //H_FIELDML_REGION
+#endif //H_FIELDML_IO_SESSION
