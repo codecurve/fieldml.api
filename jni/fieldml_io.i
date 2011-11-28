@@ -1,4 +1,4 @@
-%module FieldmlApi
+%module FieldmlIo
 %include enums.swg
 %include arrays_java.i
 
@@ -81,15 +81,15 @@
 %pragma(java) jniclasscode=%{
     static
     {
-        System.loadLibrary("fieldml_jni_0.4");
+        System.loadLibrary("fieldml_io_jni_0.4");
     }
 %}
 
 
 %{
 typedef int int32_t;
-#include "fieldml_api.h"
+#include "FieldmlIoApi.h"
 %}
 
-%include "fieldml_api.h"
+%include "FieldmlIoApi.h"
 
