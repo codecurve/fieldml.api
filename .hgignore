@@ -1,0 +1,16 @@
+.*\.class
+.*~
+\#.*\#
+.*\.jar
+.*\.mod
+.*\.so
+.*\.dll
+.*\.o
+.*\.a
+CMakeFiles
+fieldml/jni
+TAGS
+Makefile
+CMakeCache.txt
+.*\.cmake
+.*JAVA_wrap.*
